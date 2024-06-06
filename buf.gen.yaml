@@ -1,0 +1,11 @@
+version: v2
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/datacircus/sideshow/highwire/gen/go
+plugins:
+  - remote: buf.build/protocolbuffers/go:v1.31.0
+    out: gen/go
+inputs:
+  - directory: proto
