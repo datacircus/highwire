@@ -4,6 +4,7 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"fmt"
+	protovalidate "github.com/bufbuild/protovalidate-go"
 	coffeeservicev1 "github.com/datacircus/highwire/gen/coffeeservice/v1"
 	"github.com/datacircus/highwire/gen/coffeeservice/v1/coffeeservicev1connect"
 	"golang.org/x/net/http2"
@@ -18,9 +19,22 @@ func (s *CoffeeserviceServer) CoffeeOrder(ctx context.Context,
 	req *connect.Request[coffeeservicev1.CoffeeOrderRequest]) (*connect.Response[coffeeservicev1.CoffeeOrderResponse], error) {
 	log.Println("Request Headers: ", req.Header())
 	var order = req.Msg.Order
+	v, err := protovalidate.New()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	response := ""
+
+	if err := v.Validate(req.Msg); err != nil {
+		log.Println("validation failed:", err)
+		response = err.Error()
+	} else {
+		response = fmt.Sprintf("Thanks for the Order, %s\n", order.Customer.Name)
+	}
 	log.Println("New Order: ", order)
 	res := connect.NewResponse(&coffeeservicev1.CoffeeOrderResponse{
-		Response: fmt.Sprintf("Thanks for the Order, %s\n", order.Customer.Name),
+		Response: response,
 	})
 	res.Header().Set("CoffeeService-Version", "v1")
 	return res, nil
