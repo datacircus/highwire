@@ -3,9 +3,20 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/datacircus/sideshow/highwire/gen/go
+      value: github.com/datacircus/highwire/gen
+    - module: buf.build/sideshow/coffeeco
+      file_option: go_package_prefix
+      value: buf.build/gen/go/sideshow/coffeeco/protocolbuffers/go/sideshow
+  disable:
+    - module: buf.build/bufbuild/protovalidate
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.31.0
-    out: gen/go
+    out: gen
+    opt:
+      - paths=source_relative
+  - remote: buf.build/connectrpc/go:v1.16.2
+    out: gen
+    opt:
+      - paths=source_relative
 inputs:
   - directory: proto
