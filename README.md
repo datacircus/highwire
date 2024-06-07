@@ -108,6 +108,13 @@ when you close the terminal window.
 At this point, you can run `go run ./service/server/main.go` as many times as you need to create more coffee orders. 
 You can also modify the `service/client/main.go` to add new generators.
 
+To inspect the data in kafka. 
+
+~~~
+docker exec -it kafka-rp rpk topic consume coffeeco.v1.orders --brokers=localhost:9092
+~~~
+
+> You can also just monitor using `rpk topic consume coffeeco.v1.orders --brokers=localhost:9092 --offset end`
 
 ### Debugging
 > Can't resolve `kafka-rp` from outside of the Docker Container
