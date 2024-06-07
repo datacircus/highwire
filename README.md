@@ -30,3 +30,14 @@ go get buf.build/gen/go/sideshow/coffeeco/protocolbuffers/go@latest
 ~~~
 go mod tidy
 ~~~
+
+### Fun with Buf
+
+Initially the thought was we'd need to do an export from BSR to utilize the local protobufs.
+~~~
+sync:
+	@buf export buf.build/sideshow/coffeeco -o proto/
+~~~
+
+But that is not actually the case. Instead, this just gives us a nice way 
+to exchange proto definitions and their dependencies.

@@ -27,7 +27,3 @@ go.work.sum
 
 # builds
 gen/
-
-# ignore remote synced packages
-/proto/buf/
-/proto/sideshow/

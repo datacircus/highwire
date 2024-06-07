@@ -18,9 +18,6 @@ buf-format:
 build-descriptor:
 	@buf build -o gen/coffeeco.bin
 
-sync:
-	@buf export buf.build/sideshow/coffeeco -o proto/
-
 gen: buf-lint
 	@buf generate
 
