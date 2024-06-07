@@ -3,8 +3,7 @@
 	buf-lint \
 	build-descriptor \
 	clean \
-	gen \
-	sync
+	gen
 
 buf-breaking:
 	@buf breaking --against .git#branch=origin/main
