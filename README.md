@@ -47,3 +47,78 @@ sync:
 
 But that is not actually the case. Instead, this just gives us a nice way 
 to exchange proto definitions and their dependencies.
+
+---
+
+# Running the End-to-End with Kafka
+
+> Need to have `docker` installed
+> Need to create the `dais` docker network
+
+**Create the DAIS docker network**
+~~~
+docker network create dais
+~~~
+
+**Spin up the Kafka Service**
+~~~
+docker-compose \
+  -f docker-compose-service_server.yaml up \
+  --remove-orphans
+~~~
+
+## Bootstrap the Kafka Topic
+
+1. Pop on over to the Kafka Container
+~~~
+docker exec -it kafka-rp bash
+~~~
+
+2. Create the `coffeeco.v1.orders` Topic
+> Note: The protobuf package for the protobuf is `coffeeco.v1` so for the topic we are reusing the same package
+> naming conventions and tracking the `type` of events we expect to receive (in this case `coffeeco.v1.Order`) as
+> the plural `*.orders`.
+
+> Run: within the `docker container` (Step 1)
+~~~
+rpk topic create coffeeco.v1.orders --brokers=localhost:9092
+~~~
+
+3. Ensure the Topic exists
+> From within the `docker container` (Step 1) run the following.
+~~~
+rpk topic list
+~~~
+
+4. Ensure you can hit the Kafka endpoint from your local machine
+Exit the docker bash session, or open a new terminal window, and test the connection.
+~~~
+nc -z 127.0.0.1 29092
+~~~
+You should see `Connection to 127.0.0.1 port 29092 [tcp/*] succeeded!`. If you don't, then you just need to make sure
+`kafka` is running. You can modify the command in step 1 to use the `-d` flag to detach so the process doesn't close 
+when you close the terminal window.
+
+## Running the Full End to End
+> You will need 3 terminal windows. 
+> 1. The first will be to run `docker compose -f docker-compose-service_server.yaml`
+> 2. The second will be to run the connect service `go run ./service/server/main.go`
+> 3. The third will be to generate and send `CoffeeOrder`s. `go run ./service/server/main.go`
+
+At this point, you can run `go run ./service/server/main.go` as many times as you need to create more coffee orders. 
+You can also modify the `service/client/main.go` to add new generators.
+
+
+### Debugging
+> Can't resolve `kafka-rp` from outside of the Docker Container
+~~~
+%3|1717796251.070|FAIL|rdkafka#producer-1| [thrd:kafka-rp:29092/0]: kafka-rp:29092/0: Failed to resolve 'kafka-rp:29092': nodename nor servname provided, or not known (after 41ms in state CONNECT)
+~~~
+
+Solution:
+> Add `kafka-rp localhost` to your `etc/host
+
+```bash
+127.0.0.1 kafka-rp
+```
+
