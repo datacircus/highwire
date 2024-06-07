@@ -18,6 +18,7 @@ func (s *CoffeeserviceServer) CoffeeOrder(ctx context.Context,
 	req *connect.Request[coffeeservicev1.CoffeeOrderRequest]) (*connect.Response[coffeeservicev1.CoffeeOrderResponse], error) {
 	log.Println("Request Headers: ", req.Header())
 	var order = req.Msg.Order
+	log.Println("New Order: ", order)
 	res := connect.NewResponse(&coffeeservicev1.CoffeeOrderResponse{
 		Response: fmt.Sprintf("Thanks for the Order, %s\n", order.Customer.Name),
 	})

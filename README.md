@@ -31,6 +31,12 @@ go get buf.build/gen/go/sideshow/coffeeco/protocolbuffers/go@latest
 go mod tidy
 ~~~
 
+## Building the ConnectRPC Client
+
+~~~
+go get github.com/google/uuid
+~~~
+
 ### Fun with Buf
 
 Initially the thought was we'd need to do an export from BSR to utilize the local protobufs.
