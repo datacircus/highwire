@@ -2,13 +2,11 @@ syntax = "proto3";
 
 package coffeeservice.v1;
 
-import "sideshow/coffeeco/v1/order.proto";
 import "buf/validate/validate.proto";
-
-option go_package = "gen/coffeeservice/v1;coffeeservicev1";
+import "coffeeco/v1/order.proto";
 
 message CoffeeOrderRequest {
-  sideshow.coffeeco.v1.Order order = 1 [(buf.validate.field).required = true];
+  coffeeco.v1.Order order = 1 [(buf.validate.field).required = true];
 }
 
 message CoffeeOrderResponse {

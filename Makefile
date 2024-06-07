@@ -3,7 +3,8 @@
 	buf-lint \
 	build-descriptor \
 	clean \
-	gen
+	gen \
+	sync
 
 buf-breaking:
 	@buf breaking --against .git#branch=origin/main
@@ -16,6 +17,9 @@ buf-format:
 
 build-descriptor:
 	@buf build -o gen/coffeeco.bin
+
+sync:
+	@buf export buf.build/sideshow/coffeeco -o proto/
 
 gen: buf-lint
 	@buf generate
