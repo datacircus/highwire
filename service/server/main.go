@@ -18,20 +18,17 @@ import (
 type CoffeeserviceServer struct {
 	Kafka     *kafka.Producer
 	TopicName string
+	Validator *protovalidate.Validator
 }
 
 func (s *CoffeeserviceServer) CoffeeOrder(ctx context.Context,
 	req *connect.Request[coffeeservicev1.CoffeeOrderRequest]) (*connect.Response[coffeeservicev1.CoffeeOrderResponse], error) {
 	log.Println("Request Headers: ", req.Header())
 	var order = req.Msg.Order
-	v, err := protovalidate.New()
-	if err != nil {
-		fmt.Println(err)
-	}
-
+	
 	response := ""
 
-	if err := v.Validate(req.Msg); err != nil {
+	if err := s.Validator.Validate(req.Msg); err != nil {
 		log.Println("validation failed:", err)
 		response = err.Error()
 	} else {
@@ -76,9 +73,16 @@ func genKafkaProducer() *kafka.Producer {
 }
 
 func main() {
+	/* add the protovalidate instance */
+	v, err := protovalidate.New()
+	if err != nil {
+		fmt.Println(err)
+	}
+	/* to the coffeeservice */
 	coffeeservice := &CoffeeserviceServer{
 		Kafka:     genKafkaProducer(),
 		TopicName: "coffeeco.v1.orders",
+		Validator: v,
 	}
 	mux := http.NewServeMux()
 	path, handler := coffeeservicev1connect.NewCoffeeServiceHandler(coffeeservice)
